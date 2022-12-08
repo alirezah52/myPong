@@ -1,3 +1,0 @@
-/home/alireza/Documents/softwaresProgramming/cProgs/sdl/SDL2_Tutorials/sdl2Shooter/my_shooter/build/CMakeFiles/my_shooter.dir
-/home/alireza/Documents/softwaresProgramming/cProgs/sdl/SDL2_Tutorials/sdl2Shooter/my_shooter/build/CMakeFiles/edit_cache.dir
-/home/alireza/Documents/softwaresProgramming/cProgs/sdl/SDL2_Tutorials/sdl2Shooter/my_shooter/build/CMakeFiles/rebuild_cache.dir
