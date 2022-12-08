@@ -1,9 +1,13 @@
+/** pong game written in C using sdl2 library. */
+/** written by: Alireza Heidari */
+
+
 #include "common.h"
 #include "defs.h"
 #include "structs.h"
 
 
-/** function declarations */
+/** top level functions */
 void initialize(void);
 void cleanup(void);
 void doInput(void);
