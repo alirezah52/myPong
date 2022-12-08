@@ -1,3 +1,6 @@
+// Macros related to window, background
+// Ball rectangle, player rectangle,etc...
+
 #define WIN_W 1280
 #define WIN_H 640 
 

@@ -1,3 +1,7 @@
+// common libs used by all source files.
+// the second part are SDL related libs.
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
