@@ -33,7 +33,7 @@ Ball			ball;
 Player			player1;
 Player			player2;
 
-float			elapsed;
+float			frameElapsedSecond;
 bool			served = false;
 float			BALL_SPEED = 350;
 const float		PLAYER_SPEED = 300.0f;
@@ -41,9 +41,9 @@ const float		PLAYER_SPEED = 300.0f;
 
 int	main(int argc, char *argv[])
 {
-	Uint32	lastTick;
-	Uint32	currTick;
-	Uint32	diff;
+	Uint32	lastTickMiliSecond;
+	Uint32	currTickMiliSesond;
+	Uint32	diffMiliSecond;
 
 	// initialize SDL library
 	initialize();
@@ -51,15 +51,15 @@ int	main(int argc, char *argv[])
 	atexit(cleanup);
 	// initialize players and objects
 	ball = makeBall(BALL_SIZE);
-	lastTick = SDL_GetTicks();
+	lastTickMiliSecond = SDL_GetTicks();
 	while (1)
 	{
 		doInput();
-		currTick = SDL_GetTicks();
-		diff = currTick - lastTick;
-		elapsed = diff / 1000.0f;
-		update(elapsed);
-		lastTick = currTick;
+		currTickMiliSesond = SDL_GetTicks();
+		diffMiliSecond = currTickMiliSesond - lastTickMiliSecond;
+        frameElapsedSecond = diffMiliSecond / 1000.0f;
+		update(frameElapsedSecond);
+		lastTickMiliSecond = currTickMiliSesond;
 	}
 	return (0);
 }
@@ -103,7 +103,7 @@ bool	coinFlip(void)
 
 Ball	makeBall(int size)
 {
-    ball.xPosition = WINDOW_WIDTH / 2.0 - size / 2.0;
+	ball.xPosition = WINDOW_WIDTH / 2.0 - size / 2.0;
 	ball.yPosition = WINDOW_HEIGHT / 2.0 - size / 2.0;
 	ball.xSpeed = BALL_SPEED * (coinFlip() ? 1 : -1);
 	ball.ySpeed = BALL_SPEED * (coinFlip() ? 1 : -1);
@@ -121,17 +121,14 @@ Player	makePlayer(void)
 
 void	update(float elapsed)
 {
-    SDL_SetRenderDrawColor(rend, BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA);
+	SDL_SetRenderDrawColor(rend, BACKGROUND_RED, BACKGROUND_GREEN,
+			BACKGROUND_BLUE, BACKGROUND_ALPHA);
 	SDL_RenderClear(rend);
 	updateBall(&ball, elapsed);
 	updatePlayers(elapsed);
-	/** if (player1.score == 5 || player2.score == 5) { */
-	/**     updateRound(&ball); */
-	/**      */
-	/** } */
-	renderBall(&ball);
+    renderBall(&ball);
 	renderPlayers();
-	// present the drawn frame in the backbuffer to the front buffer(user screen)
+    // present the drawn frame in the backbuffer to the front buffer(user screen)
 	SDL_RenderPresent(rend);
 }
 
@@ -142,11 +139,11 @@ void	updateBall(Ball *ball, float elapsed)
 	{
 		ball->xPosition = WINDOW_WIDTH / 2.0;
 		/** TODO: randomize the start y position of ball */
-        ball->yPosition = WINDOW_HEIGHT / 2.0;
+		ball->yPosition = WINDOW_HEIGHT / 2.0;
 		return ;
 	}
 	ball->xPosition += ball->xSpeed * elapsed;
-    ball->yPosition += ball->ySpeed * elapsed;
+	ball->yPosition += ball->ySpeed * elapsed;
 	/** left wall collisions */
 	if (ball->xPosition < 0)
 	{
@@ -154,18 +151,18 @@ void	updateBall(Ball *ball, float elapsed)
 		/** ball->xSpeed = fabs(ball->xSpeed); */
 	}
 	/** right wall collisions */
-    if (ball->xPosition > WINDOW_WIDTH - BALL_SIZE)
+	if (ball->xPosition > WINDOW_WIDTH - BALL_SIZE)
 	{
 		updateScore(1, 1);
 		/** ball->xSpeed = -fabs(ball->xSpeed); */
 	}
 	/** top wall collision */
-    if (ball->yPosition < 0)
+	if (ball->yPosition < 0)
 	{
 		ball->ySpeed = fabs(ball->ySpeed);
 	}
 	/** bottom wall collision */
-    if (ball->yPosition > WINDOW_HEIGHT - BALL_SIZE)
+	if (ball->yPosition > WINDOW_HEIGHT - BALL_SIZE)
 	{
 		ball->ySpeed = -fabs(ball->ySpeed);
 	}
@@ -182,22 +179,26 @@ void	updatePlayers(float elapsed)
 		served = true;
 	}
 	/** player 1 goes up */
-	if (keyboardstate[SDL_SCANCODE_W] && player1.yPosition > PLAYER_HEIGHT/ 2.0)
+	if (keyboardstate[SDL_SCANCODE_W] && player1.yPosition > PLAYER_HEIGHT
+		/ 2.0)
 	{
 		player1.yPosition -= PLAYER_SPEED * elapsed;
 	}
 	/** player 1 goes down */
-	if (keyboardstate[SDL_SCANCODE_S] && player1.yPosition < WINDOW_HEIGHT - PLAYER_HEIGHT / 2.0)
+	if (keyboardstate[SDL_SCANCODE_S] && player1.yPosition < WINDOW_HEIGHT
+		- PLAYER_HEIGHT / 2.0)
 	{
 		player1.yPosition += PLAYER_SPEED * elapsed;
 	}
 	/** player 2 goes up */
-if (keyboardstate[SDL_SCANCODE_U] && player2.yPosition > PLAYER_HEIGHT / 2.0)
+	if (keyboardstate[SDL_SCANCODE_U] && player2.yPosition > PLAYER_HEIGHT
+		/ 2.0)
 	{
 		player2.yPosition -= PLAYER_SPEED * elapsed;
 	}
 	/** player 2 goes down */
-	if (keyboardstate[SDL_SCANCODE_J] && player2.yPosition < WINDOW_HEIGHT - PLAYER_HEIGHT / 2.0)
+	if (keyboardstate[SDL_SCANCODE_J] && player2.yPosition < WINDOW_HEIGHT
+		- PLAYER_HEIGHT / 2.0)
 	{
 		player2.yPosition += PLAYER_SPEED * elapsed;
 	}
@@ -248,22 +249,16 @@ void	updateScore(int player, int points)
 	SDL_SetWindowTitle(win, buf);
 }
 
-/** void updateRound(Ball *ball) */
-/** { */
-/**     [> served = false; <] */
-/**     SPEED += 1; */
-/** } */
-
 void	renderBall(Ball *ball)
 {
 	int	size;
 
 	size = ball->size;
-    SDL_SetRenderDrawColor(rend, BALL_RED, BALL_GREEN, BALL_BLUE, BALL_ALPHA);
+	SDL_SetRenderDrawColor(rend, BALL_RED, BALL_GREEN, BALL_BLUE, BALL_ALPHA);
 	SDL_Rect rect = {
 		.x = ball->xPosition,
 		.y = ball->yPosition,
-        .w = size,
+		.w = size,
 		.h = size};
 	SDL_RenderFillRect(rend, &rect);
 	SDL_RenderDrawRect(rend, &rect);
@@ -272,19 +267,21 @@ void	renderBall(Ball *ball)
 void	renderPlayers(void)
 {
 	/** render player 1 left and red */
-	SDL_SetRenderDrawColor(rend, PLAYER_RED, PLAYER_GREEN, PLAYER_BLUE, PLAYER_ALPHA);
+	SDL_SetRenderDrawColor(rend, PLAYER_RED, PLAYER_GREEN, PLAYER_BLUE,
+			PLAYER_ALPHA);
 	SDL_Rect p1rect = {
 		.x = PLAYER_MARGIN,
-        .y = (int)(player1.yPosition) - PLAYER_HEIGHT / 2,
+		.y = (int)(player1.yPosition) - PLAYER_HEIGHT / 2,
 		.w = PLAYER_WIDTH,
 		.h = PLAYER_HEIGHT};
 	SDL_RenderFillRect(rend, &p1rect);
 	SDL_RenderDrawRect(rend, &p1rect);
 	/** render player 2 right and blue */
-    SDL_SetRenderDrawColor(rend, PLAYER_RED, PLAYER_GREEN, PLAYER_BLUE, PLAYER_ALPHA);
+	SDL_SetRenderDrawColor(rend, PLAYER_RED, PLAYER_GREEN, PLAYER_BLUE,
+			PLAYER_ALPHA);
 	SDL_Rect p2rect = {
-        .x = WINDOW_WIDTH - PLAYER_MARGIN - PLAYER_WIDTH,
-        .y = (int)(player2.yPosition) - PLAYER_HEIGHT / 2,
+		.x = WINDOW_WIDTH - PLAYER_MARGIN - PLAYER_WIDTH,
+		.y = (int)(player2.yPosition) - PLAYER_HEIGHT / 2,
 		.w = PLAYER_WIDTH,
 		.h = PLAYER_HEIGHT};
 	SDL_RenderFillRect(rend, &p2rect);
