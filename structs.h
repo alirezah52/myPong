@@ -3,8 +3,8 @@
 
 typedef struct Ball
 {
-	float	x;
-	float	y;
+	float	xPosition;
+	float	yPosition;
 	float	xSpeed;
 	float	ySpeed;
 	int		size;
@@ -13,5 +13,5 @@ typedef struct Ball
 typedef struct Player
 {
 	int		score;
-	float	yPos;
+    float	yPosition;
 }			Player;

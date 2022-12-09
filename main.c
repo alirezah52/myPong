@@ -35,8 +35,8 @@ Player			player2;
 
 float			elapsed;
 bool			served = false;
-float			SPEED = 350;
-const float		P_SPEED = 300.0f;
+float			BALL_SPEED = 350;
+const float		PLAYER_SPEED = 300.0f;
 /** int game_round = 0; */
 
 int	main(int argc, char *argv[])
@@ -74,7 +74,7 @@ void	initialize(void)
 	}
 	/*Create the window where we will draw.*/
 	win = SDL_CreateWindow("pongali", SDL_WINDOWPOS_CENTERED,
-			SDL_WINDOWPOS_CENTERED, WIN_W, WIN_H, 0);
+			SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	if (!win)
 	{
 		fprintf(stderr, "window failed: %s\n", SDL_GetError());
@@ -103,10 +103,10 @@ bool	coinFlip(void)
 
 Ball	makeBall(int size)
 {
-	ball.x = WIN_W / 2.0 - size / 2.0;
-	ball.y = WIN_H / 2.0 - size / 2.0;
-	ball.xSpeed = SPEED * (coinFlip() ? 1 : -1);
-	ball.ySpeed = SPEED * (coinFlip() ? 1 : -1);
+    ball.xPosition = WINDOW_WIDTH / 2.0 - size / 2.0;
+	ball.yPosition = WINDOW_HEIGHT / 2.0 - size / 2.0;
+	ball.xSpeed = BALL_SPEED * (coinFlip() ? 1 : -1);
+	ball.ySpeed = BALL_SPEED * (coinFlip() ? 1 : -1);
 	ball.size = size;
 	return (ball);
 }
@@ -114,14 +114,14 @@ Ball	makeBall(int size)
 Player	makePlayer(void)
 {
 	Player player = {
-		.yPos = WIN_H / 2.0,
+		.yPosition = WINDOW_HEIGHT / 2.0,
 	};
 	return (player);
 }
 
 void	update(float elapsed)
 {
-	SDL_SetRenderDrawColor(rend, BG_R, BG_G, BG_B, BG_A);
+    SDL_SetRenderDrawColor(rend, BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA);
 	SDL_RenderClear(rend);
 	updateBall(&ball, elapsed);
 	updatePlayers(elapsed);
@@ -140,32 +140,32 @@ void	updateBall(Ball *ball, float elapsed)
 	// space starts the ball
 	if (!served)
 	{
-		ball->x = WIN_W / 2.0;
+		ball->xPosition = WINDOW_WIDTH / 2.0;
 		/** TODO: randomize the start y position of ball */
-		ball->y = WIN_H / 2.0;
+        ball->yPosition = WINDOW_HEIGHT / 2.0;
 		return ;
 	}
-	ball->x += ball->xSpeed * elapsed;
-	ball->y += ball->ySpeed * elapsed;
+	ball->xPosition += ball->xSpeed * elapsed;
+    ball->yPosition += ball->ySpeed * elapsed;
 	/** left wall collisions */
-	if (ball->x < 0)
+	if (ball->xPosition < 0)
 	{
 		updateScore(2, 1);
 		/** ball->xSpeed = fabs(ball->xSpeed); */
 	}
 	/** right wall collisions */
-	if (ball->x > WIN_W - BALL_SIZE)
+    if (ball->xPosition > WINDOW_WIDTH - BALL_SIZE)
 	{
 		updateScore(1, 1);
 		/** ball->xSpeed = -fabs(ball->xSpeed); */
 	}
 	/** top wall collision */
-	if (ball->y < 0)
+    if (ball->yPosition < 0)
 	{
 		ball->ySpeed = fabs(ball->ySpeed);
 	}
 	/** bottom wall collision */
-	if (ball->y > WIN_H - BALL_SIZE)
+    if (ball->yPosition > WINDOW_HEIGHT - BALL_SIZE)
 	{
 		ball->ySpeed = -fabs(ball->ySpeed);
 	}
@@ -182,45 +182,45 @@ void	updatePlayers(float elapsed)
 		served = true;
 	}
 	/** player 1 goes up */
-	if (keyboardstate[SDL_SCANCODE_W] && player1.yPos > P_H / 2.0)
+	if (keyboardstate[SDL_SCANCODE_W] && player1.yPosition > PLAYER_HEIGHT/ 2.0)
 	{
-		player1.yPos -= P_SPEED * elapsed;
+		player1.yPosition -= PLAYER_SPEED * elapsed;
 	}
 	/** player 1 goes down */
-	if (keyboardstate[SDL_SCANCODE_S] && player1.yPos < WIN_H - P_H / 2.0)
+	if (keyboardstate[SDL_SCANCODE_S] && player1.yPosition < WINDOW_HEIGHT - PLAYER_HEIGHT / 2.0)
 	{
-		player1.yPos += P_SPEED * elapsed;
+		player1.yPosition += PLAYER_SPEED * elapsed;
 	}
 	/** player 2 goes up */
-	if (keyboardstate[SDL_SCANCODE_U] && player2.yPos > P_H / 2.0)
+if (keyboardstate[SDL_SCANCODE_U] && player2.yPosition > PLAYER_HEIGHT / 2.0)
 	{
-		player2.yPos -= P_SPEED * elapsed;
+		player2.yPosition -= PLAYER_SPEED * elapsed;
 	}
 	/** player 2 goes down */
-	if (keyboardstate[SDL_SCANCODE_J] && player2.yPos < WIN_H - P_H / 2.0)
+	if (keyboardstate[SDL_SCANCODE_J] && player2.yPosition < WINDOW_HEIGHT - PLAYER_HEIGHT / 2.0)
 	{
-		player2.yPos += P_SPEED * elapsed;
+		player2.yPosition += PLAYER_SPEED * elapsed;
 	}
 	/** ball-player collisions */
 	SDL_Rect ballRect = {
-		.x = ball.x,
-		.y = ball.y,
+		.x = ball.xPosition,
+		.y = ball.yPosition,
 		.w = ball.size,
 		.h = ball.size};
 	SDL_Rect p1rect = {
-		.x = P_MARGIN,
-		.y = (int)(player1.yPos) - P_H / 2,
-		.w = P_W,
-		.h = P_H};
+		.x = PLAYER_MARGIN,
+		.y = (int)(player1.yPosition) - PLAYER_HEIGHT / 2,
+		.w = PLAYER_WIDTH,
+		.h = PLAYER_HEIGHT};
 	if (SDL_HasIntersection(&ballRect, &p1rect))
 	{
 		ball.xSpeed = fabs(ball.xSpeed);
 	}
 	SDL_Rect p2rect = {
-		.x = WIN_W - P_MARGIN - P_W,
-		.y = (int)(player2.yPos) - P_H / 2,
-		.w = P_W,
-		.h = P_H};
+		.x = WINDOW_WIDTH - PLAYER_MARGIN - PLAYER_WIDTH,
+		.y = (int)(player2.yPosition) - PLAYER_HEIGHT / 2,
+		.w = PLAYER_WIDTH,
+		.h = PLAYER_HEIGHT};
 	if (SDL_HasIntersection(&ballRect, &p2rect))
 	{
 		ball.xSpeed = -fabs(ball.xSpeed);
@@ -259,11 +259,11 @@ void	renderBall(Ball *ball)
 	int	size;
 
 	size = ball->size;
-	SDL_SetRenderDrawColor(rend, BALL_R, BALL_G, BALL_B, BALL_A);
+    SDL_SetRenderDrawColor(rend, BALL_RED, BALL_GREEN, BALL_BLUE, BALL_ALPHA);
 	SDL_Rect rect = {
-		.x = ball->x,
-		.y = ball->y,
-		.w = size,
+		.x = ball->xPosition,
+		.y = ball->yPosition,
+        .w = size,
 		.h = size};
 	SDL_RenderFillRect(rend, &rect);
 	SDL_RenderDrawRect(rend, &rect);
@@ -272,21 +272,21 @@ void	renderBall(Ball *ball)
 void	renderPlayers(void)
 {
 	/** render player 1 left and red */
-	SDL_SetRenderDrawColor(rend, P_R, P_G, P_B, P_A);
+	SDL_SetRenderDrawColor(rend, PLAYER_RED, PLAYER_GREEN, PLAYER_BLUE, PLAYER_ALPHA);
 	SDL_Rect p1rect = {
-		.x = P_MARGIN,
-		.y = (int)(player1.yPos) - P_H / 2,
-		.w = P_W,
-		.h = P_H};
+		.x = PLAYER_MARGIN,
+        .y = (int)(player1.yPosition) - PLAYER_HEIGHT / 2,
+		.w = PLAYER_WIDTH,
+		.h = PLAYER_HEIGHT};
 	SDL_RenderFillRect(rend, &p1rect);
 	SDL_RenderDrawRect(rend, &p1rect);
 	/** render player 2 right and blue */
-	SDL_SetRenderDrawColor(rend, P_R, P_G, P_B, P_A);
+    SDL_SetRenderDrawColor(rend, PLAYER_RED, PLAYER_GREEN, PLAYER_BLUE, PLAYER_ALPHA);
 	SDL_Rect p2rect = {
-		.x = WIN_W - P_MARGIN - P_W,
-		.y = (int)(player2.yPos) - P_H / 2,
-		.w = P_W,
-		.h = P_H};
+        .x = WINDOW_WIDTH - PLAYER_MARGIN - PLAYER_WIDTH,
+        .y = (int)(player2.yPosition) - PLAYER_HEIGHT / 2,
+		.w = PLAYER_WIDTH,
+		.h = PLAYER_HEIGHT};
 	SDL_RenderFillRect(rend, &p2rect);
 	SDL_RenderDrawRect(rend, &p2rect);
 }

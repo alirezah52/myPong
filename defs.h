@@ -1,25 +1,25 @@
 // Macros related to window, background
 // Ball rectangle, player rectangle,etc...
 
-#define WIN_W 1280
-#define WIN_H 640
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 640
 
-#define BG_R 43
-#define BG_G 84
-#define BG_B 108
-#define BG_A 255
+#define BACKGROUND_RED 43
+#define BACKGROUND_GREEN 84
+#define BACKGROUND_BLUE 108
+#define BACKGROUND_ALPHA 255
 
-#define BALL_R 255
-#define BALL_G 255
-#define BALL_B 255
-#define BALL_A 255
+#define BALL_RED 255
+#define BALL_GREEN 255
+#define BALL_BLUE 255
+#define BALL_ALPHA 255
 #define BALL_SIZE 8
 
-#define P_R 240
-#define P_G 234
-#define P_B 236
-#define P_A 255
+#define PLAYER_RED 240
+#define PLAYER_GREEN 234
+#define PLAYER_BLUE 236
+#define PLAYER_ALPHA 255
 
-#define P_W 10
-#define P_H 80
-#define P_MARGIN 20
+#define PLAYER_WIDTH 10
+#define PLAYER_HEIGHT 80
+#define PLAYER_MARGIN 20
