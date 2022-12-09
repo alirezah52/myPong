@@ -9,16 +9,16 @@
 void			initialize(void);
 void			cleanup(void);
 void			doInput(void);
-void			update(float);
+void			update(float elapsedTimeTime);
 
 /** ball functions */
-Ball			makeBall(int);
-void			updateBall(Ball *ball, float elapsed);
+Ball			makeBall(int size);
+void			updateBall(Ball *ball, float elapsedTimeTime);
 void			renderBall(Ball *ball);
 
 /** player functions  */
 Player			makePlayer(void);
-void			updatePlayers(float elapsed);
+void			updatePlayers(float elapsedTimeTime);
 void			renderPlayers(void);
 
 void			updateScore(int player, int points);
@@ -33,7 +33,7 @@ Ball			ball;
 Player			player1;
 Player			player2;
 
-float			frameElapsedSecond;
+float			frameelapsedTimeSecond;
 bool			served = false;
 float			BALL_SPEED = 350;
 const float		PLAYER_SPEED = 300.0f;
@@ -57,8 +57,8 @@ int	main(int argc, char *argv[])
 		doInput();
 		currTickMiliSesond = SDL_GetTicks();
 		diffMiliSecond = currTickMiliSesond - lastTickMiliSecond;
-        frameElapsedSecond = diffMiliSecond / 1000.0f;
-		update(frameElapsedSecond);
+        frameelapsedTimeSecond = diffMiliSecond / 1000.0f;
+		update(frameelapsedTimeSecond);
 		lastTickMiliSecond = currTickMiliSesond;
 	}
 	return (0);
@@ -119,20 +119,20 @@ Player	makePlayer(void)
 	return (player);
 }
 
-void	update(float elapsed)
+void	update(float elapsedTime)
 {
 	SDL_SetRenderDrawColor(rend, BACKGROUND_RED, BACKGROUND_GREEN,
 			BACKGROUND_BLUE, BACKGROUND_ALPHA);
 	SDL_RenderClear(rend);
-	updateBall(&ball, elapsed);
-	updatePlayers(elapsed);
+	updateBall(&ball, elapsedTime);
+	updatePlayers(elapsedTime);
     renderBall(&ball);
 	renderPlayers();
     // present the drawn frame in the backbuffer to the front buffer(user screen)
 	SDL_RenderPresent(rend);
 }
 
-void	updateBall(Ball *ball, float elapsed)
+void	updateBall(Ball *ball, float elapsedTime)
 {
 	// space starts the ball
 	if (!served)
@@ -142,8 +142,8 @@ void	updateBall(Ball *ball, float elapsed)
 		ball->yPosition = WINDOW_HEIGHT / 2.0;
 		return ;
 	}
-	ball->xPosition += ball->xSpeed * elapsed;
-	ball->yPosition += ball->ySpeed * elapsed;
+	ball->xPosition += ball->xSpeed * elapsedTime;
+	ball->yPosition += ball->ySpeed * elapsedTime;
 	/** left wall collisions */
 	if (ball->xPosition < 0)
 	{
@@ -168,7 +168,7 @@ void	updateBall(Ball *ball, float elapsed)
 	}
 }
 
-void	updatePlayers(float elapsed)
+void	updatePlayers(float elapsedTime)
 {
 	const Uint8	*keyboardstate;
 
@@ -182,25 +182,25 @@ void	updatePlayers(float elapsed)
 	if (keyboardstate[SDL_SCANCODE_W] && player1.yPosition > PLAYER_HEIGHT
 		/ 2.0)
 	{
-		player1.yPosition -= PLAYER_SPEED * elapsed;
+		player1.yPosition -= PLAYER_SPEED * elapsedTime;
 	}
 	/** player 1 goes down */
 	if (keyboardstate[SDL_SCANCODE_S] && player1.yPosition < WINDOW_HEIGHT
 		- PLAYER_HEIGHT / 2.0)
 	{
-		player1.yPosition += PLAYER_SPEED * elapsed;
+		player1.yPosition += PLAYER_SPEED * elapsedTime;
 	}
 	/** player 2 goes up */
 	if (keyboardstate[SDL_SCANCODE_U] && player2.yPosition > PLAYER_HEIGHT
 		/ 2.0)
 	{
-		player2.yPosition -= PLAYER_SPEED * elapsed;
+		player2.yPosition -= PLAYER_SPEED * elapsedTime;
 	}
 	/** player 2 goes down */
 	if (keyboardstate[SDL_SCANCODE_J] && player2.yPosition < WINDOW_HEIGHT
 		- PLAYER_HEIGHT / 2.0)
 	{
-		player2.yPosition += PLAYER_SPEED * elapsed;
+		player2.yPosition += PLAYER_SPEED * elapsedTime;
 	}
 	/** ball-player collisions */
 	SDL_Rect ballRect = {
